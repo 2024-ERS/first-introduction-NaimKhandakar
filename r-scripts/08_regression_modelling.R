@@ -110,8 +110,8 @@ anova(m3,m2)
 # include the interaction elevation_m*factor(year) between elevation and year (as a factor) in the model 
 m4 <-lm(CountSum~elevation_m+I(elevation_m^2)+factor(year)+elevation_m*factor(year), data=orchdat3)
 
-orchdat3$pred4<-predict(m4)
-p1+geom_line(data=orchdat3,aes(y=pred4,col=factor(year)),linewidth=1.2)
+orchdat3$pred3<-predict(m3)
+p1+geom_line(data=orchdat3,aes(y=pred3,col=factor(year)),linewidth=1.2)
   
 anova(m4,m3)
 
@@ -124,7 +124,7 @@ anova(m4,m3)
 
 # explore the consequences of a log transformation of y values
 x<-c(0,1,2,3,4,5)
-y<-c(1,10,100,1000,10000,100000)
+y<-c(0,0,120,1500,8000,100000)
 dat<-data.frame(x,y)
 dat
 dat %>% ggplot(aes(x=x,y=y)) +
@@ -132,7 +132,8 @@ dat %>% ggplot(aes(x=x,y=y)) +
   geom_line(size=1.2)
 dat %>% ggplot(aes(x=x,y=log10(y))) +
   geom_point(shape=16,size=3) +
-  geom_line(size=1.2)
+  #geom_line(size=1.2)
+geom_smooth(method="lm")
 dat %>% ggplot(aes(x=x,y=log(y))) + # use log with base number e
   geom_point(shape=16,size=3) +
   geom_line(size=1.2)
@@ -150,12 +151,18 @@ log(exp(1))
 # Explore  how the abundance of Orchestia depends on elevation_m and year,  their potential interaction,
 # and a potential ecological optimum of Orchestia with respect to elevation_m
 # show the effect of elevation but now in a generalized linear model instead of linear model, using a log link function and a poisson distribution
+orchdat3
+p1
 
 
 #add the linear model to the plot
 # calculate the predicted value of m2 for every observation, add to the dataset as a variable as pred2
 # add the new predicted line to the previous plot p2, store as object p3 and show it
 
+m5<-glm(CountSum~elevation_m, 
+        family = poisson(log),
+        data=orchdat3)
+anova(m5,test="Chisq") 
 
 
 # now test and show  the effect of both elevation , elevation squared and year
@@ -164,10 +171,15 @@ log(exp(1))
 #add the linear model to the plot
 # calculate the predicted value of m2 for every observation, add to the dataset as a variable as pred2
 # add the new predicted line to the previous plot p2, store as object p3 and show it
+orchdat3$pred5<-predict(m5,type="response")
+p1+geom_line(data=orchdat3,aes(y=pred5,col=factor(year)),linewidth=1.2)
 
-
-# better than the previous?
-
+# account for ecological optimum
+m6<-glm(CountSum~elevation_m+I(elevation_m^2), 
+        family = poisson(log),
+        data=orchdat3)
+orchdat3$pred6<-predict(m6,type="response")
+p1+geom_line(data=orchdat3,aes(y=pred6,col=factor(year)),linewidth=1.2)
 
 # add the interaction to the model: elevation + elevation ^2 + year + elevation*year
 # now test and show  the effect of both elevation + year
