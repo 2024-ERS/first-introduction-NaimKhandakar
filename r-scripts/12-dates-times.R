@@ -2,11 +2,13 @@
 # analyzing Climate Change, including time series analysis
 
 remove(list=ls())
+renv::restore()
+
 library(tidyverse)  # contains lubridate
 library(tidyquant)  # for calculating moving averages
 
 # database: (remove hashtag)
-# browseURL("https://docs.google.com/spreadsheets/d/1yKedemxKYMiBd8nwzZI5GI06enIZKRUvmbbLJk10uAI/edit?gid=304223944")
+#browseURL("https://docs.google.com/spreadsheets/d/1yKedemxKYMiBd8nwzZI5GI06enIZKRUvmbbLJk10uAI/edit?gid=304223944")
 
 # read the daily weather data from the KNMI station Lauwersoog - 1 jan 1991 - 31 sep 2024
 dat<-read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSmvT7qFqBPa-XIxFIzIXpZOYlWpY-MqyMVVwh_Q1nN7pzxSGaPKlWRhPfCtomR59bkLuOgaUFRa1/pub?gid=2037414920&single=true&output=csv", show_col_types = FALSE) %>%
@@ -130,3 +132,4 @@ Dat_WarmthIndex |>
   geom_point(size = 2) + 
   # geom_smooth(method = lm) +
   geom_quantile(quantiles = c(0.1, 0.5, 0.9))
+
